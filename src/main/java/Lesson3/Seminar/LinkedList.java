@@ -1,6 +1,8 @@
 package Lesson3.Seminar;
 
 
+import java.util.Comparator;
+
 /**
  * Связный список
  *
@@ -49,10 +51,10 @@ public class LinkedList<T> {
         Node node = head;
         Node prevNode = null;
         while (node != null) {
-            Node next = node.next;
+            Node buf = node.next;
             node.next = prevNode;
             prevNode = node;
-            node = next;
+            node = buf;
         }
         head = prevNode;
     }
@@ -64,6 +66,44 @@ public class LinkedList<T> {
         if (head != null) {
             head = head.next;
         }
+    }
+
+    /**
+     * Добавить элемент в конец списка
+     *
+     * @param value
+     */
+    public void addLast(T value) {
+        Node node = new Node();
+        node.value = value;
+        if (head == null) {
+            head = node;
+        } else {
+            Node lastNode = head;
+            while (lastNode.next != null) {
+                lastNode = lastNode.next;
+            }
+            lastNode.next = node;
+        }
+    }
+
+    /**
+     * Удалить последний элемент связного списка
+     */
+    public void removeLast() {
+        if (head == null) {
+            return;
+        }
+        Node node = head;
+
+        while (node.next != null) {
+            if (node.next.next == null) {
+                node.next = null;
+                return;
+            }
+            node = node.next;
+        }
+        head = null;
     }
 
     /**
@@ -83,7 +123,7 @@ public class LinkedList<T> {
         return false;
     }
 
-    public void sort() {
+    public void sort(Comparator<T> comparator) {
         Node node = head;
         while (node != null) {
 
@@ -91,8 +131,16 @@ public class LinkedList<T> {
 
             Node node2 = node.next;
             while (node2 != null) {
-
+                if (comparator.compare(minValueNode.value, node2.value) > 0) {
+                    minValueNode = node2;
+                }
                 node2 = node2.next;
+            }
+
+            if (minValueNode != node) {
+                T buf = node.value;
+                node.value = minValueNode.value;
+                minValueNode.value = buf;
             }
             node = node.next;
         }
@@ -101,14 +149,12 @@ public class LinkedList<T> {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append('[');
         Node node = head;
         while (node != null) {
             stringBuilder.append(node.value);
             stringBuilder.append('\n');
             node = node.next;
         }
-        stringBuilder.append(']');
         return stringBuilder.toString();
     }
 }
